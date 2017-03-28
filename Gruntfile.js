@@ -54,19 +54,18 @@ module.exports = function (grunt) {
       },
       gruntfile: {
         files: ['Gruntfile.js']
-      },
-      livereload: {
-        options: {
-          livereload: '<%= connect.options.livereload %>'
-        },
-        files: [
-          '<%= yeoman.pub %>/{,*/}*.html',
-          '.tmp/styles/{,*/}*.css',
-          '<%= yeoman.pub %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}'
-        ]
       }
     },
-
+    livereload: {
+    options: {
+      livereload: '<%= connect.options.livereload %>'
+    },
+    files: [
+      '<%= yeoman.pub %>/{,*/}*.html',
+      '.tmp/styles/{,*/}*.css',
+      '<%= yeoman.pub %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}'
+    ]
+  },
     // The actual grunt server settings
     connect: {
       options: {
@@ -117,7 +116,6 @@ module.exports = function (grunt) {
         }
       }
     },
-
     // Make sure there are no obvious mistakes
     jshint: {
       options: {
@@ -220,7 +218,7 @@ module.exports = function (grunt) {
             }
           }
       }
-    }, 
+    },
 
     // Renames files for browser caching purposes
     filerev: {
@@ -402,9 +400,30 @@ module.exports = function (grunt) {
       }
     },
 
+    nodemon: {
+      dev: {
+        options: {
+          file: 'server.js',
+          args: [],
+          ignoredFiles: ['README.md', 'node_modules/**', '.DS_Store'],
+          watchedExtensions: ['js'],
+          watchedFolders: ['app', 'config','pub'],
+          debug: true,
+          delayTime: 1,
+          env: {
+            PORT: 9000
+          },
+          cwd: __dirname
+        }
+      }
+    },
     // Run some tasks in parallel to speed up the build process
     concurrent: {
-      server: [
+      tasks: ['nodemon', 'watch'],
+      options: {
+        logConcurrentOutput: true
+      },
+      copystyles: [
         'copy:styles'
       ],
       test: [
@@ -429,16 +448,15 @@ module.exports = function (grunt) {
 
   grunt.registerTask('serve', 'Compile then start a connect web server', function (target) {
     if (target === 'dist') {
-      return grunt.task.run(['build', 'connect:dist:keepalive']);
+      return grunt.task.run(['build']);
     }
 
     grunt.task.run([
       'clean:server',
       'wiredep',
-      'concurrent:server',
+      'concurrent:copystyles',
       'postcss:server',
-      'connect:livereload',
-      'watch'
+      'concurrent'
     ]);
   });
 
@@ -452,7 +470,6 @@ module.exports = function (grunt) {
     'wiredep',
     'concurrent:test',
     'postcss',
-    'connect:test',
     'karma'
   ]);
 
