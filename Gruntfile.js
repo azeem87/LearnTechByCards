@@ -22,7 +22,9 @@ module.exports = function (grunt) {
   // Configurable paths for the application
   var applicationConfig = {
     pub: require('./bower.json').appPath || 'pub',
-    dist: 'dist'
+    dist: 'dist',
+    config:'config',
+    app:'app'
   };
 
   // Define the configuration for all the tasks
@@ -32,17 +34,17 @@ module.exports = function (grunt) {
     appConfig: applicationConfig,
 
     pkg: grunt.file.readJSON('package.json'),
-      env: {
-        test: {
-          NODE_ENV: 'test'
-        },
-        dev: {
-          NODE_ENV: 'development'
-        },
-        prod: {
-          NODE_ENV: 'production'
-        }
+    env: {
+      test: {
+        NODE_ENV: 'test'
       },
+      dev: {
+        NODE_ENV: 'development'
+      },
+      prod: {
+        NODE_ENV: 'production'
+      }
+    },
     // Watches files for changes and runs tasks based on the changed files
     watch: {
       bower: {
@@ -51,7 +53,7 @@ module.exports = function (grunt) {
       },
       js: {
         files: ['<%= appConfig.pub %>/scripts/{,*/}*.js'],
-        tasks: ['newer:jshint:all', 'newer:jscs:all'],
+        tasks: ['newer:jscs:all'],
         options: {
           livereload: 35729
         }
@@ -69,16 +71,16 @@ module.exports = function (grunt) {
       }
     },
     livereload: {
-    options: {
-      livereload: 35729
+      options: {
+        livereload: 35729
+      },
+      files: [
+        '<%= appConfig.pub %>/{,*/}*.html',
+        '<%= appConfig.pub %>/views/{,*/}*.html',
+        '.tmp/styles/{,*/}*.css',
+        '<%= appConfig.pub %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}'
+      ]
     },
-    files: [
-      '<%= appConfig.pub %>/{,*/}*.html',
-      '<%= appConfig.pub %>/views/{,*/}*.html',
-      '.tmp/styles/{,*/}*.css',
-      '<%= appConfig.pub %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}'
-    ]
-  },
     // Make sure code styles are up to par
     jscs: {
       options: {
@@ -152,14 +154,14 @@ module.exports = function (grunt) {
         fileTypes:{
           js: {
             block: /(([\s\t]*)\/{2}\s*?bower:\s*?(\S*))(\n|\r|.)*?(\/{2}\s*endbower)/gi,
-              detect: {
-                js: /'(.*\.js)'/gi
-              },
-              replace: {
-                js: '\'{{filePath}}\','
-              }
+            detect: {
+              js: /'(.*\.js)'/gi
+            },
+            replace: {
+              js: '\'{{filePath}}\','
             }
           }
+        }
       }
     },
 
@@ -210,7 +212,7 @@ module.exports = function (grunt) {
         }
       }
     },
-   imagemin: {
+    imagemin: {
       dist: {
         files: [{
           expand: true,
@@ -325,8 +327,8 @@ module.exports = function (grunt) {
         options:{
           args: [],
           ext: 'js,html,css',
-          ignore: ['node_modules/*'],
-          watch: ['pub/*'],
+          ignore: ['node_modules/*','bower_components/*'],
+          watch: ['<%= appConfig.pub %>/*','<%= appConfig.config %>/*','<%= appConfig.app %>/*'],
           debug: true,
           delayTime: 1,
           cwd: __dirname
@@ -335,7 +337,12 @@ module.exports = function (grunt) {
     },
     // Run some tasks in parallel to speed up the build process
     concurrent: {
-      default: ['nodemon:dev', 'watch'],
+      dev: {
+        tasks: ['nodemon:dev', 'watch'],
+        options: {
+          logConcurrentOutput: true
+        }
+      },
       options: {
         logConcurrentOutput: true
       },
@@ -361,14 +368,15 @@ module.exports = function (grunt) {
     }
   });
 
-    grunt.loadNpmTasks('grunt-nodemon');
+  grunt.loadNpmTasks('grunt-nodemon');
+  grunt.loadNpmTasks('grunt-concurrent');
 
   grunt.registerTask('serve', 'Compile then start a connect web server', function (target) {
     if (target === 'dist') {
       return grunt.task.run(['build']);
     }
 
-    grunt.task.run(['concurrent:default']);
+    grunt.task.run(['concurrent:dev']);
   });
 
   grunt.registerTask('server', 'DEPRECATED TASK. Use the "serve" task instead', function (target) {
@@ -380,7 +388,7 @@ module.exports = function (grunt) {
   grunt.registerTask('test',['clean:server','wiredep','concurrent:test','postcss','karma']);
 
   grunt.registerTask('prod',['env:dev','clean:dist','wiredep','useminPrepare','concurrent:dist','postcss','ngtemplates',
-                     'concat', 'ngAnnotate', 'copy:dist', 'cdnify', 'cssmin', 'uglify', 'filerev', 'usemin', 'htmlmin'
+    'concat', 'ngAnnotate', 'copy:dist', 'cdnify', 'cssmin', 'uglify', 'filerev', 'usemin', 'htmlmin'
   ]);
 
   grunt.registerTask('build',['clean:server','wiredep:pub']);
