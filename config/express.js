@@ -1,6 +1,3 @@
-/**
- * Module dependencies.
- */
 var express = require('express'),
   mongoStore = require('connect-mongo'),
   flash = require('connect-flash'),
@@ -25,18 +22,19 @@ module.exports = function(app, passport, db) {
    */
   //Setting the fav icon and static folder
   // app.use(express.favicon());
-  app.use(express.static(config.root + '/pub'));
+  var appFolder = (process.env.NODE_ENV==='production') ? '/dist' : '/pub';
+
+  app.use(express.static(config.root + appFolder));
   app.use("/bower_components",express.static(config.root + '/bower_components'));
 
   //Don't use logger for test env
   //  if (process.env.NODE_ENV !== 'test') {
   //    app.use(express.logger('dev'));
   //}
-
   //Set views path, template engine and default layout
-  app.set('views', config.root + '/pub/views')
-  app.set('view engine', 'dot')
-  app.engine('html', doT.__express)
+  app.set('views', config.root + appFolder+'/views');
+  app.set('view engine', 'dot');
+  app.engine('html', doT.__express);
   doT.templateSettings = {
     varname: 'data'
   }
@@ -51,7 +49,7 @@ module.exports = function(app, passport, db) {
    */
 
   //cookieParser should be above session
-  // app.use(express.cookieParser());
+// app.use(express.cookieParser());
 
   // request body parsing middleware should be above methodOverride
   //app.use(express.urlencoded());
@@ -69,10 +67,10 @@ module.exports = function(app, passport, db) {
    */
 
   //connect flash for flash messages
-  // app.use(flash());
+// app.use(flash());
 
   //dynamic helpers
-  // app.use(helpers(config.app.name));
+// app.use(helpers(config.app.name));
 
   //use passport session
   app.use(passport.initialize());
@@ -95,10 +93,10 @@ module.exports = function(app, passport, db) {
     //});
   });
 
-  app.all('/*', function(req, res, next) {
+  //app.all('/*', function(req, res, next) {
   // Just send the index.html for other files to support HTML5Mode
-   res.sendFile('index.html', { root: __dirname });
-  });
+  // res.sendFile('index.html', { root: __dirname });
+  //});
 
 
   //Assume 404 since no middleware responded

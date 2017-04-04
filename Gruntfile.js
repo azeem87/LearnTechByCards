@@ -1,4 +1,3 @@
-// Generated on 2017-03-28 using generator-angular 0.16.0
 'use strict';
 
 // # Globbing
@@ -6,7 +5,10 @@
 // 'test/spec/{,*/}*.js'
 // use this if you want to recursively match all subfolders:
 // 'test/spec/**/*.js'
-var _ = require('lodash');
+
+// Configurable paths for the application
+var applicationConfig = require('./config/env/all.js');
+
 module.exports = function (grunt) {
 
   // Time how long tasks take. Can help when optimizing build times
@@ -18,14 +20,6 @@ module.exports = function (grunt) {
     ngtemplates: 'grunt-angular-templates',
     cdnify: 'grunt-google-cdn'
   });
-
-  // Configurable paths for the application
-  var applicationConfig = {
-    pub: require('./bower.json').appPath || 'pub',
-    dist: 'dist',
-    config:'config',
-    app:'app'
-  };
 
   // Define the configuration for all the tasks
   grunt.initConfig({
@@ -55,7 +49,7 @@ module.exports = function (grunt) {
         files: ['<%= appConfig.pub %>/scripts/{,*/}*.js'],
         tasks: ['newer:jscs:all'],
         options: {
-          livereload: 35729
+          livereload: true
         }
       },
       jsTest: {
@@ -72,7 +66,7 @@ module.exports = function (grunt) {
     },
     livereload: {
       options: {
-        livereload: 35729
+        livereload: true
       },
       files: [
         '<%= appConfig.pub %>/{,*/}*.html',
@@ -283,7 +277,7 @@ module.exports = function (grunt) {
         html: ['<%= appConfig.dist %>/*.html']
       },
       dev: {
-        html: ['<%= appConfig.app %>/*.html']
+        html: ['<%= appConfig.pub %>/*.html']
       }
     },
 
@@ -333,18 +327,27 @@ module.exports = function (grunt) {
           delayTime: 1,
           cwd: __dirname
         }
+      },
+      prod: {
+        script: 'server.js',
+        options:{
+          args: [],
+          ext: 'js,html,css',
+          ignore: ['node_modules/*','bower_components/*'],
+          watch: ['<%= appConfig.dist %>/*','<%= appConfig.config %>/*','<%= appConfig.app %>/*'],
+          debug: true,
+          delayTime: 1,
+          cwd: __dirname
+        }
       }
     },
     // Run some tasks in parallel to speed up the build process
     concurrent: {
       dev: {
-        tasks: ['nodemon:dev', 'watch'],
-        options: {
-          logConcurrentOutput: true
-        }
+        tasks: ['nodemon:dev', 'watch']
       },
-      options: {
-        logConcurrentOutput: true
+      prod: {
+        tasks: ['nodemon:prod']
       },
       copystyles: [
         'copy:styles'
@@ -356,7 +359,10 @@ module.exports = function (grunt) {
         'copy:styles',
         'imagemin',
         'svgmin'
-      ]
+      ],
+      options: {
+        logConcurrentOutput: true
+      }
     },
 
     // Test settings
@@ -372,10 +378,9 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-concurrent');
 
   grunt.registerTask('serve', 'Compile then start a connect web server', function (target) {
-    if (target === 'dist') {
-      return grunt.task.run(['build']);
+    if (target === 'prod') {
+      return grunt.task.run(['concurrent:prod']);
     }
-
     grunt.task.run(['concurrent:dev']);
   });
 
@@ -384,16 +389,18 @@ module.exports = function (grunt) {
     grunt.task.run(['serve:' + target]);
   });
 
-
-  grunt.registerTask('test',['clean:server','wiredep','concurrent:test','postcss','karma']);
-
-  grunt.registerTask('prod',['env:dev','clean:dist','wiredep','useminPrepare','concurrent:dist','postcss','ngtemplates',
-    'concat', 'ngAnnotate', 'copy:dist', 'cdnify', 'cssmin', 'uglify', 'filerev', 'usemin', 'htmlmin'
-  ]);
-
   grunt.registerTask('build',['clean:server','wiredep:pub']);
 
   grunt.registerTask('dev',['env:dev','build','serve']);
 
-  grunt.registerTask('default', ['dev']);
+  grunt.registerTask('prod',['env:prod','clean:dist','wiredep:pub','useminPrepare','concurrent:dist','postcss','ngtemplates',
+    'concat', 'ngAnnotate', 'copy:dist', 'cdnify', 'cssmin', 'uglify', 'filerev', 'usemin','htmlmin'
+  ]);
+
+  grunt.registerTask('dist',['prod','serve:prod']);
+
+  grunt.registerTask('test',['clean:server','wiredep:test','concurrent:test','postcss','karma']);
+
+  grunt.registerTask('default', ['build']);
+
 };

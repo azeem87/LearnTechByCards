@@ -1,9 +1,9 @@
 var path = require('path'),
-rootPath = path.normalize(__dirname + '/../..');
+  rootPath = path.normalize(__dirname + '/../..');
 
 module.exports = {
-	root: rootPath,
-	port: process.env.PORT || 9000,
+  root: rootPath,
+  port: process.env.PORT || 9000,
   title: 'LearnTechByCards',
   description: 'Learn Technology By Viewing Each Cards',
   keywords: 'Tech, Cards',
@@ -13,6 +13,9 @@ module.exports = {
   sessionSecret: 'CARDS-SECRET',
   sessionCollection: 'sessions',
   logo: 'pub/images/logo.png',
-  favicon: 'pub/favicon.ico'
+  favicon: 'pub/favicon.ico',
+  pub: 'pub',
+  dist: 'dist',
+  config:'config',
+  app:'app'
 };
-

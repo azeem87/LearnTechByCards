@@ -54,7 +54,6 @@
     "karma-requirejs": "~0.2.0",
     "karma-script-launcher": "~0.1.0",
     "load-grunt-tasks": "~0.2.0",
-    "lodash": "^3.10.0",
     "mean-logger": "latest",
     "mongoose": "^4.0.6",
     "passport": "~0.2.2",
