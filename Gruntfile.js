@@ -319,7 +319,7 @@ module.exports = function (grunt) {
       dev: {
         script: 'server.js',
         options:{
-          args: [],
+          args: ["--verbose"],
           ext: 'js,html,css',
           ignore: ['node_modules/*','bower_components/*'],
           watch: ['<%= appConfig.pub %>/*','<%= appConfig.config %>/*','<%= appConfig.app %>/*'],
