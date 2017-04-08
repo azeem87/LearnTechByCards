@@ -394,7 +394,7 @@ module.exports = function (grunt) {
   grunt.registerTask('dev',['env:dev','build','serve']);
 
   grunt.registerTask('prod',['env:prod','clean:dist','wiredep:pub','useminPrepare','concurrent:dist','postcss','ngtemplates',
-    'concat', 'ngAnnotate', 'copy:dist', 'cdnify', 'cssmin', 'uglify', 'filerev', 'usemin','htmlmin'
+    'concat', 'ngAnnotate', 'copy:dist', 'cdnify', 'cssmin', 'uglify', 'filerev', 'usemin'
   ]);
 
   grunt.registerTask('dist',['prod','serve:prod']);
