@@ -1,6 +1,6 @@
 module.exports = function(app, passport, auth) {
     //User Routes
-    var users = require('../app/controllers/users');
+    var users = require('../../app/controllers/users');
     app.get('/users/me', users.me);
 
     //Setting up the users api
@@ -25,7 +25,7 @@ module.exports = function(app, passport, auth) {
     app.param('userId', users.user);
 
     //Home route
-    var index = require('../app/controllers/index');
+    var index = require('../../app/controllers/index');
     app.get('/', index.render);
 
 };

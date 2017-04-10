@@ -46,7 +46,7 @@ module.exports = function (grunt) {
         tasks: ['wiredep']
       },
       js: {
-        files: ['<%= appConfig.pub %>/scripts/{,*/}*.js'],
+        files: ['<%= appConfig.files.pub %>/scripts/{,*/}*.js'],
         tasks: ['newer:jscs:all'],
         options: {
           livereload: true
@@ -57,7 +57,7 @@ module.exports = function (grunt) {
         tasks: ['newer:jshint:test', 'newer:jscs:test', 'karma']
       },
       styles: {
-        files: ['<%= appConfig.pub %>/styles/{,*/}*.css'],
+        files: ['<%= appConfig.files.pub %>/styles/{,*/}*.css'],
         tasks: ['newer:copy:styles', 'postcss']
       },
       gruntfile: {
@@ -69,10 +69,10 @@ module.exports = function (grunt) {
         livereload: true
       },
       files: [
-        '<%= appConfig.pub %>/{,*/}*.html',
-        '<%= appConfig.pub %>/views/{,*/}*.html',
+        '<%= appConfig.files.pub %>/{,*/}*.html',
+        '<%= appConfig.files.pub %>/views/{,*/}*.html',
         '.tmp/styles/{,*/}*.css',
-        '<%= appConfig.pub %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}'
+        '<%= appConfig.files.pub %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}'
       ]
     },
     // Make sure code styles are up to par
@@ -84,7 +84,7 @@ module.exports = function (grunt) {
       all: {
         src: [
           'Gruntfile.js',
-          '<%= appConfig.pub %>/scripts/{,*/}*.js'
+          '<%= appConfig.files.pub %>/scripts/{,*/}*.js'
         ]
       },
       test: {
@@ -99,8 +99,8 @@ module.exports = function (grunt) {
           dot: true,
           src: [
             '.tmp',
-            '<%= appConfig.dist %>/{,*/}*',
-            '!<%= appConfig.dist %>/.git{,*/}*'
+            '<%= appConfig.files.dist %>/{,*/}*',
+            '!<%= appConfig.files.dist %>/.git{,*/}*'
           ]
         }]
       },
@@ -138,7 +138,7 @@ module.exports = function (grunt) {
     // Automatically inject Bower components into the pub
     wiredep: {
       pub: {
-        src: ['<%= appConfig.pub %>/index.html'],
+        src: ['<%= appConfig.files.pub %>/index.html'],
         ignorePath:  /\.\.\//
       },
       test: {
@@ -163,10 +163,10 @@ module.exports = function (grunt) {
     filerev: {
       dist: {
         src: [
-          '<%= appConfig.dist %>/scripts/{,*/}*.js',
-          '<%= appConfig.dist %>/styles/{,*/}*.css',
-          '<%= appConfig.dist %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}',
-          '<%= appConfig.dist %>/styles/fonts/*'
+          '<%= appConfig.files.dist %>/scripts/{,*/}*.js',
+          '<%= appConfig.files.dist %>/styles/{,*/}*.css',
+          '<%= appConfig.files.dist %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}',
+          '<%= appConfig.files.dist %>/styles/fonts/*'
         ]
       }
     },
@@ -175,9 +175,9 @@ module.exports = function (grunt) {
     // concat, minify and revision files. Creates configurations in memory so
     // additional tasks can operate on them
     useminPrepare: {
-      html: '<%= appConfig.pub %>/index.html',
+      html: '<%= appConfig.files.pub %>/index.html',
       options: {
-        dest: '<%= appConfig.dist %>',
+        dest: '<%= appConfig.files.dist %>',
         flow: {
           html: {
             steps: {
@@ -192,14 +192,14 @@ module.exports = function (grunt) {
 
     // Performs rewrites based on filerev and the useminPrepare configuration
     usemin: {
-      html: ['<%= appConfig.dist %>/{,*/}*.html'],
-      css: ['<%= appConfig.dist %>/styles/{,*/}*.css'],
-      js: ['<%= appConfig.dist %>/scripts/{,*/}*.js'],
+      html: ['<%= appConfig.files.dist %>/{,*/}*.html'],
+      css: ['<%= appConfig.files.dist %>/styles/{,*/}*.css'],
+      js: ['<%= appConfig.files.dist %>/scripts/{,*/}*.js'],
       options: {
         assetsDirs: [
-          '<%= appConfig.dist %>',
-          '<%= appConfig.dist %>/images',
-          '<%= appConfig.dist %>/styles'
+          '<%= appConfig.files.dist %>',
+          '<%= appConfig.files.dist %>/images',
+          '<%= appConfig.files.dist %>/styles'
         ],
         patterns: {
           js: [[/(images\/[^''""]*\.(png|jpg|jpeg|gif|webp|svg))/g, 'Replacing references to images']]
@@ -210,9 +210,9 @@ module.exports = function (grunt) {
       dist: {
         files: [{
           expand: true,
-          cwd: '<%= appConfig.pub %>/images',
+          cwd: '<%= appConfig.files.pub %>/images',
           src: '{,*/}*.{png,jpg,jpeg,gif}',
-          dest: '<%= appConfig.dist %>/images'
+          dest: '<%= appConfig.files.dist %>/images'
         }]
       }
     },
@@ -221,9 +221,9 @@ module.exports = function (grunt) {
       dist: {
         files: [{
           expand: true,
-          cwd: '<%= appConfig.pub %>/images',
+          cwd: '<%= appConfig.files.pub %>/images',
           src: '{,*/}*.svg',
-          dest: '<%= appConfig.dist %>/images'
+          dest: '<%= appConfig.files.dist %>/images'
         }]
       }
     },
@@ -238,9 +238,9 @@ module.exports = function (grunt) {
         },
         files: [{
           expand: true,
-          cwd: '<%= appConfig.dist %>',
+          cwd: '<%= appConfig.files.dist %>',
           src: ['*.html'],
-          dest: '<%= appConfig.dist %>'
+          dest: '<%= appConfig.files.dist %>'
         }]
       }
     },
@@ -252,7 +252,7 @@ module.exports = function (grunt) {
           htmlmin: '<%= htmlmin.dist.options %>',
           usemin: 'scripts/scripts.js'
         },
-        cwd: '<%= appConfig.pub %>',
+        cwd: '<%= appConfig.files.pub %>',
         src: 'views/{,*/}*.html',
         dest: '.tmp/templateCache.js'
       }
@@ -274,10 +274,10 @@ module.exports = function (grunt) {
     // Replace Google CDN references
     cdnify: {
       dist: {
-        html: ['<%= appConfig.dist %>/*.html']
+        html: ['<%= appConfig.files.dist %>/*.html']
       },
       dev: {
-        html: ['<%= appConfig.pub %>/*.html']
+        html: ['<%= appConfig.files.pub %>/*.html']
       }
     },
 
@@ -287,8 +287,8 @@ module.exports = function (grunt) {
         files: [{
           expand: true,
           dot: true,
-          cwd: '<%= appConfig.pub %>',
-          dest: '<%= appConfig.dist %>',
+          cwd: '<%= appConfig.files.pub %>',
+          dest: '<%= appConfig.files.dist %>',
           src: [
             '*.{ico,png,txt}',
             '*.html',
@@ -298,18 +298,18 @@ module.exports = function (grunt) {
         }, {
           expand: true,
           cwd: '.tmp/images',
-          dest: '<%= appConfig.dist %>/images',
+          dest: '<%= appConfig.files.dist %>/images',
           src: ['generated/*']
         }, {
           expand: true,
           cwd: 'bower_components/bootstrap/dist',
           src: 'fonts/*',
-          dest: '<%= appConfig.dist %>'
+          dest: '<%= appConfig.files.dist %>'
         }]
       },
       styles: {
         expand: true,
-        cwd: '<%= appConfig.pub %>/styles',
+        cwd: '<%= appConfig.files.pub %>/styles',
         dest: '.tmp/styles/',
         src: '{,*/}*.css'
       }
@@ -322,7 +322,7 @@ module.exports = function (grunt) {
           args: ["--verbose"],
           ext: 'js,html,css',
           ignore: ['node_modules/*','bower_components/*'],
-          watch: ['<%= appConfig.pub %>/*','<%= appConfig.config %>/*','<%= appConfig.app %>/*'],
+          watch: ['<%= appConfig.files.pub %>/*','<%= appConfig.files.config %>/*','<%= appConfig.files.app %>/*'],
           debug: true,
           delayTime: 1,
           cwd: __dirname
@@ -334,7 +334,7 @@ module.exports = function (grunt) {
           args: [],
           ext: 'js,html,css',
           ignore: ['node_modules/*','bower_components/*'],
-          watch: ['<%= appConfig.dist %>/*','<%= appConfig.config %>/*','<%= appConfig.app %>/*'],
+          watch: ['<%= appConfig.files.dist %>/*','<%= appConfig.files.config %>/*','<%= appConfig.files.app %>/*'],
           debug: true,
           delayTime: 1,
           cwd: __dirname

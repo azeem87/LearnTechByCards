@@ -1,21 +1,27 @@
+'use strict';
+
 var path = require('path'),
-  rootPath = path.normalize(__dirname + '/../..');
+  rootPath = path.normalize(__dirname + '/../..'),
+  appRoot = path.resolve(__dirname);
 
 module.exports = {
+  app: {
+    title: 'LearnTechByCards',
+    description: 'Learn Technology By Viewing Each Cards',
+    keywords: 'Tech, Cards, Learn',
+    googleAnalyticsTrackingID: process.env.GOOGLE_ANALYTICS_TRACKING_ID || 'GOOGLE_ANALYTICS_TRACKING_ID'
+  },
   root: rootPath,
-  port: process.env.PORT || 9000,
-  title: 'LearnTechByCards',
-  description: 'Learn Technology By Viewing Each Cards',
-  keywords: 'Tech, Cards',
-  googleAnalyticsTrackingID: process.env.GOOGLE_ANALYTICS_TRACKING_ID || 'GOOGLE_ANALYTICS_TRACKING_ID',
-  db: process.env.MONGOHQ_URL,
-  templateEngine: 'dot',
+  rootPath : appRoot,
+  port: process.env.PORT || 3000,
+  templateEngine: 'ejs',
   sessionSecret: 'CARDS-SECRET',
   sessionCollection: 'sessions',
-  logo: 'pub/images/logo.png',
-  favicon: 'pub/favicon.ico',
-  pub: 'pub',
-  dist: 'dist',
-  config:'config',
-  app:'app'
+  files : {
+    pub: 'pub',
+    dist: 'dist',
+    config: 'config',
+    app: 'app'
+  }
 };
+
