@@ -17,7 +17,6 @@ var config = require('../config'),
   cookieParser = require('cookie-parser'),
   helmet = require('helmet'),
   flash = require('connect-flash'),
-  consolidate = require('consolidate'),
   path = require('path');
 
 /**
@@ -96,11 +95,8 @@ module.exports.initMiddleware = function (app) {
  * Configure view engine
  */
 module.exports.initViewEngine = function (app) {
-  // Set ejs as the template engine
-  app.engine('server.view.html', consolidate[config.templateEngine]);
-
   // Set views path and view engine
-  app.set('view engine', 'server.view.html');
+  app.set('view engine', config.templateEngine);
   app.set('views', config.root + config.viewPath);
 };
 
