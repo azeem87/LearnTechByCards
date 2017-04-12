@@ -1,3 +1,4 @@
+
 'use strict';
 
 var defaultEnvConfig = require('./all');
@@ -7,7 +8,8 @@ module.exports = {
     uri: process.env.MONGOHQ_URL || process.env.MONGOLAB_URI || 'mongodb://' + (process.env.DB_1_PORT_27017_TCP_ADDR || 'localhost') + '/mean-dev',
     options: {
       user: '',
-      pass: ''
+      pass: '',
+      auto_reconnect:true
     },
     // Enable mongoose debug mode
     debug: process.env.MONGODB_DEBUG || false
@@ -42,5 +44,6 @@ module.exports = {
   logo: 'pub/images/logo.png',
   favicon: 'pub/favicon.ico',
   viewPath: 'pub/views',
+  staticPath : defaultEnvConfig.root + "/pub",
   livereload: true
 };

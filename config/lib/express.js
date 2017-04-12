@@ -1,3 +1,5 @@
+
+
 'use strict';
 
 /**
@@ -28,7 +30,6 @@ module.exports.initLocalVariables = function (app) {
   app.locals.secure = config.secure;
   app.locals.keywords = config.app.keywords;
   app.locals.googleAnalyticsTrackingID = config.app.googleAnalyticsTrackingID;
-  app.locals.facebookAppId = config.facebook.clientID;
   app.locals.livereload = config.livereload;
   app.locals.logo = config.logo;
   app.locals.favicon = config.favicon;
@@ -60,7 +61,7 @@ module.exports.initMiddleware = function (app) {
   }));
 
   // Initialize favicon middleware
-  app.use(favicon('./'+app.local.favicon));
+  app.use(favicon('./'+app.locals.favicon));
 
   // Environment dependent middleware
   if (process.env.NODE_ENV === 'development') {
@@ -78,7 +79,6 @@ module.exports.initMiddleware = function (app) {
     extended: true
   }));
   app.use(bodyParser.json());
-  app.use(methodOverride());
 
   // Add the cookie parser and flash middleware
   app.use(cookieParser());
@@ -120,12 +120,11 @@ module.exports.initSession = function (app, db) {
   }));
 };
 
-//todo
 /**
  * Invoke modules server configuration
  */
 module.exports.initModulesConfiguration = function (app, db) {
-  config.files.server.configs.forEach(function (configPath) {
+  config.files.modules.forEach(function (configPath) {
     require(path.resolve(configPath))(app, db);
   });
 };
@@ -147,32 +146,26 @@ module.exports.initHelmetHeaders = function (app) {
  */
 module.exports.initModulesClientRoutes = function (app) {
   // Setting the app router and static folder
-  app.use('/', express.static(path.resolve('./public')));
+  app.use(express.static(config.staticPath));
 
-  // Globbing static routing
-  config.folders.client.forEach(function (staticPath) {
-    app.use(staticPath.replace('/client', ''), express.static(path.resolve('./' + staticPath)));
-  });
-};
+  // Configure only dev enviroment
+  if (process.env.NODE_ENV === 'development')
+  {
+    app.use("/bower_components",express.static(config.root + '/bower_components'));
+  }
 
-/**
- * Configure the modules ACL policies
- */
-module.exports.initModulesServerPolicies = function (app) {
-  // Globbing policy files
-  config.files.server.policies.forEach(function (policyPath) {
-    require(path.resolve(policyPath)).invokeRolesPolicies();
-  });
 };
 
 /**
  * Configure the modules server routes
  */
 module.exports.initModulesServerRoutes = function (app) {
+
+  //Todo
   // Globbing routing files
-  config.files.server.routes.forEach(function (routePath) {
-    require(path.resolve(routePath))(app);
-  });
+  //config.files.server.routes.forEach(function (routePath) {
+  //  require(path.resolve(routePath))(app);
+  //});
 };
 
 /**
@@ -193,16 +186,6 @@ module.exports.initErrorRoutes = function (app) {
   });
 };
 
-/**
- * Configure Socket.io
- */
-module.exports.configureSocketIO = function (app, db) {
-  // Load the Socket.io configuration
-  var server = require('./socket.io')(app, db);
-
-  // Return server object
-  return server;
-};
 
 /**
  * Initialize the Express application
@@ -232,128 +215,11 @@ module.exports.init = function (db) {
   // Initialize modules static client routes
   this.initModulesClientRoutes(app);
 
-  // Initialize modules server authorization policies
-  this.initModulesServerPolicies(app);
-
   // Initialize modules server routes
   this.initModulesServerRoutes(app);
 
   // Initialize error routes
   this.initErrorRoutes(app);
 
-  // Configure Socket.io
-  app = this.configureSocketIO(app, db);
-
   return app;
-};
-
-
-var express = require('express'),
-  mongoStore = require('connect-mongo'),
-  flash = require('connect-flash'),
-  helpers = require('view-helpers'),
-  config = require('./../config'),
-  doT = require('express-dot'),
-  path = require('path');
-
-module.exports = function(app, passport, db) {
-  app.set('showStackError', true);
-
-  //Prettify HTML
-  app.locals.pretty = true;
-
-  //Should be placed before express.static
-  /* app.use(express.compress({
-   filter: function(req, res) {
-   return (/json|text|javascript|css/).test(res.getHeader('Content-Type'));
-   },
-   level: 9
-   }));
-   */
-  //Setting the fav icon and static folder
-  // app.use(express.favicon());
-  var appFolder = (process.env.NODE_ENV==='production') ? '/dist' : '/pub';
-
-  app.use(express.static(config.root + appFolder));
-  app.use("/bower_components",express.static(config.root + '/bower_components'));
-
-  //Don't use logger for test env
-  //  if (process.env.NODE_ENV !== 'test') {
-  //    app.use(express.logger('dev'));
-  //}
-  //Set views path, template engine and default layout
-  app.set('views', config.root + appFolder+'/views');
-  app.set('view engine', 'dot');
-  app.engine('html', doT.__express);
-  doT.templateSettings = {
-    varname: 'data'
-  }
-
-  //Enable jsonp
-  app.enable("jsonp callback");
-
-  /* app.configure(function() {
-
-
-   });
-   */
-
-  //cookieParser should be above session
-// app.use(express.cookieParser());
-
-  // request body parsing middleware should be above methodOverride
-  //app.use(express.urlencoded());
-  //app.use(express.json());
-  //app.use(express.methodOverride());
-
-  //express/mongo session storage
-  /*app.use(express.session({
-   secret: 'CARDS-SECRET',
-   store: new mongoStore({
-   db: db.connection.db,
-   collection: 'sessions'
-   })
-   }));
-   */
-
-  //connect flash for flash messages
-// app.use(flash());
-
-  //dynamic helpers
-// app.use(helpers(config.app.name));
-
-  //use passport session
-  app.use(passport.initialize());
-  app.use(passport.session());
-
-  //routes should be at the last
-  //app.use(app.router);
-
-  //Assume "not found" in the error msgs is a 404. this is somewhat silly, but valid, you can do whatever you like, set properties, use instanceof etc.
-  app.use(function(err, req, res, next) {
-    //Treat as 404
-    if (~err.message.indexOf('not found')) return next();
-
-    //Log it
-    console.error(err.stack);
-
-    //Error page
-    //res.status(500).render('500.html', {
-    error: err.stack
-    //});
-  });
-
-  //app.all('/*', function(req, res, next) {
-  // Just send the index.html for other files to support HTML5Mode
-  // res.sendFile('index.html', { root: __dirname });
-  //});
-
-
-  //Assume 404 since no middleware responded
-  //app.use(function(req, res, next) {
-  //  res.status(404).render('404.html', {
-  //    url: req.originalUrl,
-  //    error: 'Not found'
-  //  });
-  //});
 };

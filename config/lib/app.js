@@ -1,3 +1,5 @@
+
+
 'use strict';
 
 /**
@@ -16,6 +18,7 @@ module.exports.loadModels = function loadModels() {
 };
 
 module.exports.init = function init(callback) {
+
 
   mongoose.connect(function (db) {
     // Initialize express
@@ -38,7 +41,7 @@ module.exports.start = function start(callback) {
       console.log(chalk.green(config.app.title));
       console.log(chalk.green('Environment:\t\t\t' + process.env.NODE_ENV));
       console.log(chalk.green('Port:\t\t\t\t' + config.port));
-      console.log(chalk.green('Database:\t\t\t\t' + config.db.uri));
+      console.log(chalk.green('Database:\t\t\t' + config.db.uri));
       console.log('--');
 
       if (callback) callback(app, db, config);

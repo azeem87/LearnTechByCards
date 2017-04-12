@@ -1,3 +1,4 @@
+
 'use strict';
 
 // # Globbing
@@ -46,7 +47,7 @@ module.exports = function (grunt) {
         tasks: ['wiredep']
       },
       js: {
-        files: ['<%= appConfig.files.pub %>/scripts/{,*/}*.js'],
+        files: ['<%= appConfig.folders.pub %>/scripts/{,*/}*.js'],
         tasks: ['newer:jscs:all'],
         options: {
           livereload: true
@@ -57,7 +58,7 @@ module.exports = function (grunt) {
         tasks: ['newer:jshint:test', 'newer:jscs:test', 'karma']
       },
       styles: {
-        files: ['<%= appConfig.files.pub %>/styles/{,*/}*.css'],
+        files: ['<%= appConfig.folders.pub %>/styles/{,*/}*.css'],
         tasks: ['newer:copy:styles', 'postcss']
       },
       gruntfile: {
@@ -69,10 +70,10 @@ module.exports = function (grunt) {
         livereload: true
       },
       files: [
-        '<%= appConfig.files.pub %>/{,*/}*.html',
-        '<%= appConfig.files.pub %>/views/{,*/}*.html',
+        '<%= appConfig.folders.pub %>/{,*/}*.html',
+        '<%= appConfig.folders.pub %>/views/{,*/}*.html',
         '.tmp/styles/{,*/}*.css',
-        '<%= appConfig.files.pub %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}'
+        '<%= appConfig.folders.pub %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}'
       ]
     },
     // Make sure code styles are up to par
@@ -84,7 +85,7 @@ module.exports = function (grunt) {
       all: {
         src: [
           'Gruntfile.js',
-          '<%= appConfig.files.pub %>/scripts/{,*/}*.js'
+          '<%= appConfig.folders.pub %>/scripts/{,*/}*.js'
         ]
       },
       test: {
@@ -99,8 +100,8 @@ module.exports = function (grunt) {
           dot: true,
           src: [
             '.tmp',
-            '<%= appConfig.files.dist %>/{,*/}*',
-            '!<%= appConfig.files.dist %>/.git{,*/}*'
+            '<%= appConfig.folders.dist %>/{,*/}*',
+            '!<%= appConfig.folders.dist %>/.git{,*/}*'
           ]
         }]
       },
@@ -138,7 +139,7 @@ module.exports = function (grunt) {
     // Automatically inject Bower components into the pub
     wiredep: {
       pub: {
-        src: ['<%= appConfig.files.pub %>/index.html'],
+        src: ['<%= appConfig.folders.pub %>/index.html'],
         ignorePath:  /\.\.\//
       },
       test: {
@@ -163,10 +164,10 @@ module.exports = function (grunt) {
     filerev: {
       dist: {
         src: [
-          '<%= appConfig.files.dist %>/scripts/{,*/}*.js',
-          '<%= appConfig.files.dist %>/styles/{,*/}*.css',
-          '<%= appConfig.files.dist %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}',
-          '<%= appConfig.files.dist %>/styles/fonts/*'
+          '<%= appConfig.folders.dist %>/scripts/{,*/}*.js',
+          '<%= appConfig.folders.dist %>/styles/{,*/}*.css',
+          '<%= appConfig.folders.dist %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}',
+          '<%= appConfig.folders.dist %>/styles/fonts/*'
         ]
       }
     },
@@ -175,9 +176,9 @@ module.exports = function (grunt) {
     // concat, minify and revision files. Creates configurations in memory so
     // additional tasks can operate on them
     useminPrepare: {
-      html: '<%= appConfig.files.pub %>/index.html',
+      html: '<%= appConfig.folders.pub %>/index.html',
       options: {
-        dest: '<%= appConfig.files.dist %>',
+        dest: '<%= appConfig.folders.dist %>',
         flow: {
           html: {
             steps: {
@@ -192,14 +193,14 @@ module.exports = function (grunt) {
 
     // Performs rewrites based on filerev and the useminPrepare configuration
     usemin: {
-      html: ['<%= appConfig.files.dist %>/{,*/}*.html'],
-      css: ['<%= appConfig.files.dist %>/styles/{,*/}*.css'],
-      js: ['<%= appConfig.files.dist %>/scripts/{,*/}*.js'],
+      html: ['<%= appConfig.folders.dist %>/{,*/}*.html'],
+      css: ['<%= appConfig.folders.dist %>/styles/{,*/}*.css'],
+      js: ['<%= appConfig.folders.dist %>/scripts/{,*/}*.js'],
       options: {
         assetsDirs: [
-          '<%= appConfig.files.dist %>',
-          '<%= appConfig.files.dist %>/images',
-          '<%= appConfig.files.dist %>/styles'
+          '<%= appConfig.folders.dist %>',
+          '<%= appConfig.folders.dist %>/images',
+          '<%= appConfig.folders.dist %>/styles'
         ],
         patterns: {
           js: [[/(images\/[^''""]*\.(png|jpg|jpeg|gif|webp|svg))/g, 'Replacing references to images']]
@@ -210,9 +211,9 @@ module.exports = function (grunt) {
       dist: {
         files: [{
           expand: true,
-          cwd: '<%= appConfig.files.pub %>/images',
+          cwd: '<%= appConfig.folders.pub %>/images',
           src: '{,*/}*.{png,jpg,jpeg,gif}',
-          dest: '<%= appConfig.files.dist %>/images'
+          dest: '<%= appConfig.folders.dist %>/images'
         }]
       }
     },
@@ -221,9 +222,9 @@ module.exports = function (grunt) {
       dist: {
         files: [{
           expand: true,
-          cwd: '<%= appConfig.files.pub %>/images',
+          cwd: '<%= appConfig.folders.pub %>/images',
           src: '{,*/}*.svg',
-          dest: '<%= appConfig.files.dist %>/images'
+          dest: '<%= appConfig.folders.dist %>/images'
         }]
       }
     },
@@ -238,9 +239,9 @@ module.exports = function (grunt) {
         },
         files: [{
           expand: true,
-          cwd: '<%= appConfig.files.dist %>',
+          cwd: '<%= appConfig.folders.dist %>',
           src: ['*.html'],
-          dest: '<%= appConfig.files.dist %>'
+          dest: '<%= appConfig.folders.dist %>'
         }]
       }
     },
@@ -252,7 +253,7 @@ module.exports = function (grunt) {
           htmlmin: '<%= htmlmin.dist.options %>',
           usemin: 'scripts/scripts.js'
         },
-        cwd: '<%= appConfig.files.pub %>',
+        cwd: '<%= appConfig.folders.pub %>',
         src: 'views/{,*/}*.html',
         dest: '.tmp/templateCache.js'
       }
@@ -274,10 +275,10 @@ module.exports = function (grunt) {
     // Replace Google CDN references
     cdnify: {
       dist: {
-        html: ['<%= appConfig.files.dist %>/*.html']
+        html: ['<%= appConfig.folders.dist %>/*.html']
       },
       dev: {
-        html: ['<%= appConfig.files.pub %>/*.html']
+        html: ['<%= appConfig.folders.pub %>/*.html']
       }
     },
 
@@ -287,8 +288,8 @@ module.exports = function (grunt) {
         files: [{
           expand: true,
           dot: true,
-          cwd: '<%= appConfig.files.pub %>',
-          dest: '<%= appConfig.files.dist %>',
+          cwd: '<%= appConfig.folders.pub %>',
+          dest: '<%= appConfig.folders.dist %>',
           src: [
             '*.{ico,png,txt}',
             '*.html',
@@ -298,18 +299,18 @@ module.exports = function (grunt) {
         }, {
           expand: true,
           cwd: '.tmp/images',
-          dest: '<%= appConfig.files.dist %>/images',
+          dest: '<%= appConfig.folders.dist %>/images',
           src: ['generated/*']
         }, {
           expand: true,
           cwd: 'bower_components/bootstrap/dist',
           src: 'fonts/*',
-          dest: '<%= appConfig.files.dist %>'
+          dest: '<%= appConfig.folders.dist %>'
         }]
       },
       styles: {
         expand: true,
-        cwd: '<%= appConfig.files.pub %>/styles',
+        cwd: '<%= appConfig.folders.pub %>/styles',
         dest: '.tmp/styles/',
         src: '{,*/}*.css'
       }
@@ -322,7 +323,7 @@ module.exports = function (grunt) {
           args: ["--verbose"],
           ext: 'js,html,css',
           ignore: ['node_modules/*','bower_components/*'],
-          watch: ['<%= appConfig.files.pub %>/*','<%= appConfig.files.config %>/*','<%= appConfig.files.app %>/*'],
+          watch: ['<%= appConfig.folders.pub %>/*','<%= appConfig.folders.config %>/*','<%= appConfig.folders.app %>/*'],
           debug: true,
           delayTime: 1,
           cwd: __dirname
@@ -334,7 +335,7 @@ module.exports = function (grunt) {
           args: [],
           ext: 'js,html,css',
           ignore: ['node_modules/*','bower_components/*'],
-          watch: ['<%= appConfig.files.dist %>/*','<%= appConfig.files.config %>/*','<%= appConfig.files.app %>/*'],
+          watch: ['<%= appConfig.folders.dist %>/*','<%= appConfig.folders.config %>/*','<%= appConfig.folders.app %>/*'],
           debug: true,
           delayTime: 1,
           cwd: __dirname

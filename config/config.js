@@ -1,3 +1,5 @@
+
+
 'use strict';
 
 /**
@@ -22,17 +24,16 @@ var initGlobalConfig = function () {
   var config = _.merge(allConfig, environmentConfig);
 
   // Setting Globbed model files
+  // we exclude mongoose.js from modules, we load db manually
   config.files = {
-    models : getGlobbedPaths("app/models/*.js")
+    models  : getGlobbedPaths("app/models/*.js"),
+    modules : getGlobbedPaths("config/modules/**/!(mongoose).js")
   };
 
   // Expose configuration utilities
   config.utils = {
     getGlobbedPaths: getGlobbedPaths
   };
-
-  console.log("root -----> "+config.root);
-  console.log("rootPath -----> "+config.rootPath);
 
   return config;
 }
@@ -72,7 +73,6 @@ var getGlobbedPaths = function (globPatterns, excludes) {
       output = _.union(output, files);
     }
   }
-
   return output;
 };
 
@@ -80,4 +80,3 @@ var getGlobbedPaths = function (globPatterns, excludes) {
  * Set configuration object
  */
 module.exports = initGlobalConfig();
-

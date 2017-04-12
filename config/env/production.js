@@ -1,4 +1,8 @@
+
+
 'use strict';
+
+var defaultEnvConfig = require('./all');
 
 module.exports = {
   secure: true,
@@ -38,5 +42,6 @@ module.exports = {
   },
   logo: 'dist/images/logo.png',
   favicon: 'dist/favicon.ico',
-  viewPath: 'dist/views'
+  viewPath: 'dist/views',
+  staticPath : defaultEnvConfig.root + "/dist"
 };
