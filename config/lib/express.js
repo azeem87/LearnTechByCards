@@ -16,6 +16,7 @@ var config = require('../config'),
   compress = require('compression'),
   cookieParser = require('cookie-parser'),
   helmet = require('helmet'),
+  consolidate = require('consolidate'),
   flash = require('connect-flash'),
   path = require('path');
 
@@ -32,6 +33,8 @@ module.exports.initLocalVariables = function (app) {
   app.locals.livereload = config.livereload;
   app.locals.logo = config.logo;
   app.locals.favicon = config.favicon;
+  app.locals.viewPath = config.viewPath;
+  app.locals.staticFromRootPath = config.staticFromRootPath;
 
   // Passing the request url to environment locals
   app.use(function (req, res, next) {
@@ -96,8 +99,15 @@ module.exports.initMiddleware = function (app) {
  */
 module.exports.initViewEngine = function (app) {
   // Set views path and view engine
-  app.set('view engine', config.templateEngine);
-  app.set('views', config.root + config.viewPath);
+  //app.set('view engine', config.templateEngine);
+  //app.set('views', config.root + config.viewPath);
+
+  // Set swig as the template engine
+  app.engine('.html', consolidate[config.templateEngine]);
+
+  // Set views path and view engine
+  app.set('view engine', '.html');
+  app.set('views', './');
 };
 
 /**
@@ -142,12 +152,12 @@ module.exports.initHelmetHeaders = function (app) {
  */
 module.exports.initModulesClientRoutes = function (app) {
   // Setting the app router and static folder
-  app.use(express.static(config.staticPath));
+  app.use('/', express.static(path.resolve('.'+config.staticPath)));
 
   // Configure only dev enviroment
   if (process.env.NODE_ENV === 'development')
   {
-    app.use("/bower_components",express.static(config.root + '/bower_components'));
+    app.use('/bower_components', express.static(path.resolve('./bower_components')));
   }
 
 };
@@ -157,11 +167,10 @@ module.exports.initModulesClientRoutes = function (app) {
  */
 module.exports.initModulesServerRoutes = function (app) {
 
-  //Todo
   // Globbing routing files
-  //config.files.server.routes.forEach(function (routePath) {
-  //  require(path.resolve(routePath))(app);
-  //});
+  config.files.routes.forEach(function (routePath) {
+    require(path.resolve(routePath))(app);
+  });
 };
 
 /**

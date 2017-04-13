@@ -43,5 +43,6 @@ module.exports = {
   logo: 'dist/images/logo.png',
   favicon: 'dist/favicon.ico',
   viewPath: 'dist/views',
-  staticPath : defaultEnvConfig.root + "/dist"
+  staticPath : '/dist',
+  staticFromRootPath : defaultEnvConfig.root + "/dist"
 };

@@ -44,6 +44,7 @@ module.exports = {
   logo: 'pub/images/logo.png',
   favicon: 'pub/favicon.ico',
   viewPath: 'pub/views',
-  staticPath : defaultEnvConfig.root + "/pub",
+  staticFromRootPath : defaultEnvConfig.root + "/pub",
+  staticPath : '/pub',
   livereload: true
 };

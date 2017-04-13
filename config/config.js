@@ -27,7 +27,8 @@ var initGlobalConfig = function () {
   // we exclude mongoose.js from modules, we load db manually
   config.files = {
     models  : getGlobbedPaths("app/models/*.js"),
-    modules : getGlobbedPaths("config/modules/**/!(mongoose).js")
+    modules : getGlobbedPaths("config/modules/**/!(mongoose).js"),
+    routes  : getGlobbedPaths("app/routes/*.js")
   };
 
   // Expose configuration utilities
