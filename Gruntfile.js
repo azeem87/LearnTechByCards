@@ -320,8 +320,9 @@ module.exports = function (grunt) {
       dev: {
         script: 'server.js',
         options:{
-          args: ["--verbose"],
-          ext: 'js,html,css',
+          verbose:'true',
+          args: ['--debug'],
+          ext: 'js,html',
           ignore: ['node_modules/*','bower_components/*'],
           watch: ['<%= appConfig.folders.pub %>/*','<%= appConfig.folders.config %>/*','<%= appConfig.folders.app %>/*'],
           debug: true,
@@ -388,9 +389,9 @@ module.exports = function (grunt) {
 
   grunt.registerTask('serve', 'Compile then start a connect web server', function (target) {
     if (target === 'prod') {
-      return grunt.task.run(['concurrent:prod']);
+      return grunt.task.run(['env:prod','concurrent:prod']);
     }
-    grunt.task.run(['concurrent:dev']);
+    grunt.task.run(['env:dev','concurrent:dev']);
   });
 
   grunt.registerTask('server', 'DEPRECATED TASK. Use the "serve" task instead', function (target) {
@@ -400,9 +401,9 @@ module.exports = function (grunt) {
 
   grunt.registerTask('build',['clean:server','wiredep:pub']);
 
-  grunt.registerTask('dev',['env:dev','build','serve']);
+  grunt.registerTask('dev',['build','serve']);
 
-  grunt.registerTask('prod',['env:prod','clean:dist','wiredep:pub','useminPrepare','concurrent:dist','postcss','ngtemplates',
+  grunt.registerTask('prod',['clean:dist','wiredep:pub','useminPrepare','concurrent:dist','postcss','ngtemplates',
     'concat', 'ngAnnotate', 'copy:dist', 'cdnify', 'cssmin', 'uglify', 'filerev', 'usemin'
   ]);
 

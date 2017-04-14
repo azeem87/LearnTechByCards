@@ -31,6 +31,5 @@ module.exports = {
       }
     }
   },
-  //todo
-  staticFromRootPath : defaultEnvConfig.root + "/pub"
+  staticPath : "/test"
 };

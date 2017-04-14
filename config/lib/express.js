@@ -34,7 +34,6 @@ module.exports.initLocalVariables = function (app) {
   app.locals.logo = config.logo;
   app.locals.favicon = config.favicon;
   app.locals.viewPath = config.viewPath;
-  app.locals.staticFromRootPath = config.staticFromRootPath;
 
   // Passing the request url to environment locals
   app.use(function (req, res, next) {
@@ -98,16 +97,12 @@ module.exports.initMiddleware = function (app) {
  * Configure view engine
  */
 module.exports.initViewEngine = function (app) {
-  // Set views path and view engine
-  //app.set('view engine', config.templateEngine);
-  //app.set('views', config.root + config.viewPath);
-
   // Set swig as the template engine
   app.engine('.html', consolidate[config.templateEngine]);
 
   // Set views path and view engine
   app.set('view engine', '.html');
-  app.set('views', './');
+  app.set('views', path.resolve('./'+config.viewPath));
 };
 
 /**

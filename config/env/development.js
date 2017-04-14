@@ -1,4 +1,3 @@
-
 'use strict';
 
 var defaultEnvConfig = require('./all');
@@ -43,8 +42,7 @@ module.exports = {
   },
   logo: 'pub/images/logo.png',
   favicon: 'pub/favicon.ico',
-  viewPath: 'pub/views',
-  staticFromRootPath : defaultEnvConfig.root + "/pub",
+  viewPath: '/pub/views',
   staticPath : '/pub',
   livereload: true
 };
