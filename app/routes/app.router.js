@@ -8,5 +8,5 @@ module.exports = function (app) {
   app.route('/server-error').get(rootController.renderServerError);
 
   // Define application route
-  app.route('/*').get(rootController.renderIndex);
+  app.route('/').get(rootController.renderIndex);
 };

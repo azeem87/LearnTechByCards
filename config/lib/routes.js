@@ -1,31 +1,15 @@
-module.exports = function(app, passport, auth) {
-    //User Routes
-    var users = require('../../app/controllers/users');
-    app.get('/users/me', users.me);
+'use strict';
 
-    //Setting up the users api
-    app.post('/auth/signup', users.signup);
-    app.post('/auth/signin', users.signin);
-    app.get('/auth/signout', users.signout);
+module.exports = function (app) {
+  // Root routing
+  var rootController = require('../../app/controllers/root.controller');
 
-    //Setting the google oauth routes
-    app.get('/auth/google', passport.authenticate('google', {
-        failureRedirect: '/#!/signin',
-        scope: [
-            'https://www.googleapis.com/auth/userinfo.profile',
-            'https://www.googleapis.com/auth/userinfo.email'
-        ]
-    }), users.signin);
+  // Define error pages
+  app.route('/server-error').get(rootController.renderServerError);
 
-    app.get('/auth/google/callback', passport.authenticate('google', {
-        failureRedirect: '/#!/signin'
-    }), users.authCallback);
+  // Return a 404 for all undefined api, module or lib routes
+  app.route('/:url(api)/*').get(rootController.renderNotFound);
 
-    //Finish with setting up the userId param
-    app.param('userId', users.user);
-
-    //Home route
-    var index = require('../../app/controllers/index');
-    app.get('/', index.render);
-
+  // Define application route
+  app.route('/*').get(rootController.renderIndex);
 };

@@ -102,10 +102,11 @@ module.exports.initViewEngine = function (app) {
 
   // Set views path and view engine
   app.set('view engine', '.html');
-  app.set('views', path.resolve('./'+config.viewPath));
+  //console.log("view path - "+path.resolve('.'+config.viewPath));
+  app.set('views', path.resolve('.'+config.viewPath));
 };
 
-/**
+/**ss
  * Configure Express session
  */
 module.exports.initSession = function (app, db) {

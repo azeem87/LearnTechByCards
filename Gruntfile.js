@@ -139,7 +139,7 @@ module.exports = function (grunt) {
     // Automatically inject Bower components into the pub
     wiredep: {
       pub: {
-        src: ['<%= appConfig.folders.pub %>/index.html'],
+        src: ['<%= appConfig.folders.pub %>/layout.html'],
         ignorePath:  /\.\.\//
       },
       test: {
@@ -176,7 +176,7 @@ module.exports = function (grunt) {
     // concat, minify and revision files. Creates configurations in memory so
     // additional tasks can operate on them
     useminPrepare: {
-      html: '<%= appConfig.folders.pub %>/index.html',
+      html: '<%= appConfig.folders.pub %>/layout.html',
       options: {
         dest: '<%= appConfig.folders.dist %>',
         flow: {
